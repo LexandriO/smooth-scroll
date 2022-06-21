@@ -32,7 +32,38 @@ function smoothHorizontalScrollingBehavior(event, sc, eAmt, start) {
 	event.scrollLeft = (eAmt * sc) + start;
 }
 
+function smoothScrollY(position, time) {
+	let currentPosition = window.pageYOffset;
+	let start = null;
+
+	if (time === null) {
+		time = 500;
+	}
+
+	position = +position;
+	time = +time;
+
+	window.requestAnimationFrame(function step(currentTime) {
+		start = !start ? currentTime : start;
+
+		let progress = currentTime - start;
+
+		if (currentPosition < position) {
+			window.scrollTo(0, ((position - currentPosition) * progress / time) + currentPosition);
+		} else {
+			window.scrollTo(0, currentPosition - ((position - currentPosition) * progress / time));
+		}
+
+		if (progress < time) {
+			window.requestAnimationFrame(step);
+		} else {
+			window.scrollTo(0, position);
+		}
+	});
+}
+
 export {
 	smoothVerticalScrolling,
 	smoothHorizontalScrolling,
+	smoothScrollY,
 }
