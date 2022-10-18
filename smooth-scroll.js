@@ -67,3 +67,40 @@ export {
 	smoothHorizontalScrolling,
 	smoothScrollY,
 }
+
+
+//////////////////////
+
+function smoothScrollY(position: number, time: number): void {
+	let currentPosition = window.pageYOffset;
+	let start = null;
+
+	if (time === null) {
+		time = 500;
+	}
+
+	position = +position;
+	time = +time;
+
+	window.requestAnimationFrame(function step(currentTime) {
+		start = !start ? currentTime : start;
+
+		let progress = currentTime - start;
+
+		if (currentPosition < position) {
+			window.scrollTo(0, ((position - currentPosition) * progress / time) + currentPosition);
+		} else {
+			window.scrollTo(0, currentPosition - ((currentPosition - position) * progress / time));
+		}
+
+		if (progress < time) {
+			window.requestAnimationFrame(step);
+		} else {
+			window.scrollTo(0, position);
+		}
+	});
+}
+
+export {
+	smoothScrollY,
+}
